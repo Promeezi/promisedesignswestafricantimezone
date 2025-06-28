@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>West African Time Zones</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .clock-card {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .clock-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .flag-icon {
+            width: 24px;
+            height: 16px;
+            display: inline-block;
+            margin-right: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-container {
+            position: relative;
+        }
+        
+        .search-container i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+        }
+        
+        #search {
+            padding-left: 36px;
+        }
+        
+        .time-display {
+            font-family: 'Courier New', monospace;
+        }
+        
+        .timezone-badge {
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body class="py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-10">
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-2">West African Time Zones</h1>
+            <p class="text-gray-600 max-w-2xl mx-auto">Current local times across West African countries</p>
+        </div>
+        
+        <div class="mb-8 max-w-md mx-auto">
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search" placeholder="Search countries..." class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="clocks-container">
+            <!-- Clocks will be inserted here by JavaScript -->
+        </div>
+        
+        <div class="mt-12 text-center text-gray-500 text-sm">
+            <p>All times are shown in 24-hour format. West Africa Time (WAT). Promise Designs</p>
+        </div>
+    </div>
+
+    <script>
+        // West African countries with their time zones and flag colors
+        const westAfricanCountries = [
+            { 
+                name: "Benin", 
+                timezone: "Africa/Porto-Novo",
+                flagColors: ["#008751", "#fcd116", "#e8112d"],
+                capital: "Porto-Novo"
+            },
+            { 
+                name: "Burkina Faso", 
+                timezone: "Africa/Ouagadougou",
+                flagColors: ["#009e49", "#ef2b2d", "#fcdd09"],
+                capital: "Ouagadougou"
+            },
+            { 
+                name: "Cabo Verde", 
+                timezone: "Atlantic/Cape_Verde",
+                flagColors: ["#003893", "#fff", "#cf2027", "#f8d504"],
+                capital: "Praia"
+            },
+            { 
+                name: "Côte d'Ivoire", 
+                timezone: "Africa/Abidjan",
+                flagColors: ["#f77f00", "#fff", "#009e60"],
+                capital: "Yamoussoukro"
+            },
+            { 
+                name: "Gambia", 
+                timezone: "Africa/Banjul",
+                flagColors: ["#ce1126", "#fff", "#0c1c8c"],
+                capital: "Banjul"
+            },
+            { 
+                name: "Ghana", 
+                timezone: "Africa/Accra",
+                flagColors: ["#ce1126", "#fcdd09", "#006b3f", "#000"],
+                capital: "Accra"
+            },
+            { 
+                name: "Guinea", 
+                timezone: "Africa/Conakry",
+                flagColors: ["#ce1126", "#fcdd09", "#009460"],
+                capital: "Conakry"
+            },
+            { 
+                name: "Guinea-Bissau", 
+                timezone: "Africa/Bissau",
+                flagColors: ["#ce1126", "#fcdd09", "#009460", "#000"],
+                capital: "Bissau"
+            },
+            { 
+                name: "Liberia", 
+                timezone: "Africa/Monrovia",
+                flagColors: ["#002868", "#fff", "#c0c0c0"],
+                capital: "Monrovia"
+            },
+            { 
+                name: "Mali", 
+                timezone: "Africa/Bamako",
+                flagColors: ["#14b53a", "#fcdd09", "#ce1126"],
+                capital: "Bamako"
+            },
+            { 
+                name: "Mauritania", 
+                timezone: "Africa/Nouakchott",
+                flagColors: ["#00a651", "#ffc400", "#cd212a"],
+                capital: "Nouakchott"
+            },
+            { 
+                name: "Niger", 
+                timezone: "Africa/Niamey",
+                flagColors: ["#0db02b", "#fff", "#e05206"],
+                capital: "Niamey"
+            },
+            { 
+                name: "Nigeria", 
+                timezone: "Africa/Lagos",
+                flagColors: ["#008751", "#fff"],
+                capital: "Abuja"
+            },
+            { 
+                name: "Senegal", 
+                timezone: "Africa/Dakar",
+                flagColors: ["#00853f", "#fcdd09", "#e31b23"],
+                capital: "Dakar"
+            },
+            { 
+                name: "Sierra Leone", 
+                timezone: "Africa/Freetown",
+                flagColors: ["#0072c6", "#fff", "#1eb53a"],
+                capital: "Freetown"
+            },
+            { 
+                name: "Togo", 
+                timezone: "Africa/Lome",
+                flagColors: ["#fff", "#ffcc00", "#dc241f", "#006a4e"],
+                capital: "Lomé"
+            }
+        ];
+
+        // Function to create flag element
+        function createFlag(colors) {
+            const flag = document.createElement('div');
+            flag.className = 'flag-icon';
+            
+            // Create stripes for the flag
+            colors.forEach(color => {
+                const stripe = document.createElement('div');
+                stripe.style.height = `${100/colors.length}%`;
+                stripe.style.backgroundColor = color;
+                flag.appendChild(stripe);
+            });
+            
+            return flag;
+        }
+
+        // Function to format time
+        function formatTime(date) {
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const seconds = date.getSeconds().toString().padStart(2, '0');
+            return `${hours}:${minutes}:${seconds}`;
+        }
+
+        // Function to format date
+        function formatDate(date) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        // Function to get timezone offset
+        function getTimezoneOffset(timezone) {
+            const now = new Date();
+            const options = { timeZone: timezone, timeZoneName: 'short' };
+            return now.toLocaleTimeString('en-US', options).split(' ')[2];
+        }
+
+        // Function to create clock card
+        function createClockCard(country) {
+            const now = new Date();
+            const options = { timeZone: country.timezone };
+            const localTime = new Date(now.toLocaleString('en-US', options));
+            
+            const card = document.createElement('div');
+            card.className = 'clock-card bg-white rounded-xl p-6 flex flex-col';
+            
+            // Country header with flag
+            const header = document.createElement('div');
+            header.className = 'flex items-center mb-4';
+            
+            const flag = createFlag(country.flagColors);
+            header.appendChild(flag);
+            
+            const countryName = document.createElement('h2');
+            countryName.className = 'text-lg font-semibold text-gray-800';
+            countryName.textContent = country.name;
+            header.appendChild(countryName);
+            
+            card.appendChild(header);
+            
+            // Capital city
+            const capital = document.createElement('p');
+            capital.className = 'text-sm text-gray-500 mb-1';
+            capital.textContent = country.capital;
+            card.appendChild(capital);
+            
+            // Time display
+            const timeDisplay = document.createElement('div');
+            timeDisplay.className = 'time-display text-3xl font-bold text-gray-800 my-4 text-center';
+            timeDisplay.textContent = formatTime(localTime);
+            card.appendChild(timeDisplay);
+            
+            // Date display
+            const dateDisplay = document.createElement('div');
+            dateDisplay.className = 'text-sm text-gray-600 text-center mb-3';
+            dateDisplay.textContent = formatDate(localTime);
+            card.appendChild(dateDisplay);
+            
+            // Timezone badge
+            const timezoneBadge = document.createElement('div');
+            timezoneBadge.className = 'timezone-badge bg-blue-100 text-blue-800 rounded-full px-3 py-1 inline-block mt-auto self-center';
+            timezoneBadge.textContent = getTimezoneOffset(country.timezone);
+            card.appendChild(timezoneBadge);
+            
+            return card;
+        }
+
+        // Function to update all clocks
+        function updateClocks() {
+            const container = document.getElementById('clocks-container');
+            container.innerHTML = '';
+            
+            westAfricanCountries.forEach(country => {
+                const card = createClockCard(country);
+                container.appendChild(card);
+            });
+        }
+
+        // Initialize clocks
+        updateClocks();
+        setInterval(updateClocks, 1000);
+
+        // Search functionality
+        document.getElementById('search').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.clock-card');
+            
+            cards.forEach(card => {
+                const countryName = card.querySelector('h2').textContent.toLowerCase();
+                if (countryName.includes(searchTerm)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Sort countries alphabetically
+        westAfricanCountries.sort((a, b) => a.name.localeCompare(b.name));
+    </script>
+</body>
+</html>
